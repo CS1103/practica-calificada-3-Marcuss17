@@ -30,15 +30,18 @@ void generarArchivo(vector<string> v1){
     int sum;
     int menor;
     string alias;
+    string val;
     vector<int> bids;
     vector<string> low;
     unordered_map<string,int> m1;
-
+    unordered_map<string,map<string,int>> m2;
     for(auto it = v1.begin(); it != v1.end();it++){
         if(it == v1.begin() && isupper((*it)[0])){
             file2 << *it;
         }
         if(isupper((*it)[0]) && it != v1.begin()){
+            auto m3 = m1;
+            m2.insert(pair<string,unordered_map<string,int>>(*it,m3));
             sum = 0;
             menor = 99999;
             for(auto it4 : bids){
@@ -75,10 +78,5 @@ void generarArchivo(vector<string> v1){
             bids.push_back(num1);
             m1.insert(pair<string,int>(alias,num1));
         }
-    }
-
-    for(auto it : m1){
-        cout << it.first << " " << it.second;
-        cout <<endl;
     }
 }
