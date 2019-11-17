@@ -8,4 +8,4 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wpedantic -Wextra")
 endif()
 
-add_executable(pc3 main.cpp funcs.h funcs.cpp)
+add_executable(pc3 main.cpp)

@@ -1,20 +1,18 @@
 IPHONE 11,50,30.000000,20
+alias10 :20
 alias11 :50
 alias12 :40
 alias13 :20
-alias10 :20
 MACBOOK PRO,20,11.666667,9
 alias3 :20
-alias1 :10
 alias8 :10
 alias9 :10
 SAMSUNG TV 50,11,10.666667,10
-alias1a :11
 alias14 :11
 alias15 :10
+alias1a :11
 THINKPAD P50,50,22.000000,10
 alias4 :50
-alias1 :20
 alias5 :20
 alias6 :10
 alias7 :10

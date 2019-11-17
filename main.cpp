@@ -1,72 +1,59 @@
 #include <iostream>
 #include <fstream>
-#include <map>
-#include <set>
-#include <sstream>
 #include <string>
+#include <sstream>
 #include <vector>
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <map>
 
-using namespace std;
-
-struct participante{
-	string nombre;
-	int bid;
-bool operator<(const participante& p2) const{
-	if(bid > p2.bid && nombre != p2.nombre) return true;
-	else if(bid == p2.bid && nombre != p2.nombre) return true;
-}
-};
-
+using std::ifstream; using std::ofstream; using std::cout; using std::cin; using std::endl; using std::string; using std::vector; using std::stringstream; using std::map; using std::to_string;
 
 int main(){
 	ifstream file;
-	file.open("/home/eduardo/Desktop/Utec/Poo2/practica-calificada-3-Marcuss17/bid_example.txt");
-	set <participante> s1;
+	string ruta= "/home/eduardo/Desktop/Utec/Poo2/practica-calificada-3-Marcuss17/bid_example.txt";
+	file.open(ruta);
+	vector<string> v1;
 	string key;
-	char empty = ' ';
 	string alias;
-	string snum;
-	string smayor;
-	string smenor;
-	string sprom;
-	int num;
-	vector <string> v1;
-	vector <int> v2;
+	string sbid;
+	int nbid;
+	map<string,map<string,int> > m1;
+	map<string,int> m2;
+	vector<string> toEliminate;
+	vector<int> numbers;
+	string smayor,smenor,sprom;
 	int mayor;
 	int menor;
 	float prom;
-	bool isIn;
 	float sum;
-	map <string,set<participante>> map1;
-	if(!file.is_open())
-		cout << "Error abriendo el archivo";
-	else{
-		string line;
-		while(getline(file,line)){
-			string myStr;
-			stringstream ss(line);
+	if(!file.is_open()){cout << "No se pudo abrir el archivo!";}
+	else{	
+		string fila;
+		string myStr;
+		while(getline(file,fila)){
+			stringstream ss(fila);
 			getline(ss,myStr);
 			v1.push_back(myStr);
-		}		
+		}
 	}
 	file.close();
+	
 	for(auto it = v1.begin(); it != v1.end(); it++){
-		if(it == v1.begin() && isupper((*it)[0])){
+		if(isupper((*it)[0])  && it == v1.begin()){
 			key = *it;
 		}
-		if((it != v1.begin() && isupper((*it)[0])) || (it == v1.end()-1)){
+		else if((it != v1.begin() && isupper((*it)[0])) || it == v1.end()-1){
 			sum = 0;
 			mayor = 0;
 			menor = 99999;
-			for(auto it : v2){
-				sum += it;
+			for(auto it : numbers){
+				sum+=it;
 				if(it > mayor)
 					mayor = it;
 				if(it < menor)
 					menor = it;
-			}
-			prom = sum/v2.size();
+			} 
+			prom = sum/numbers.size();
 			smayor = to_string(mayor);
 			smenor = to_string(menor);
 			sprom = to_string(prom);
@@ -76,119 +63,80 @@ int main(){
 			key += sprom;
 			key += ',';
 			key += smenor;
-			map1.insert(pair<string,set<participante>>(key,s1));
+			m1[key] = m2;
+			m2.clear();
+			numbers.clear();
 			key = *it;
-			s1.clear();
-			v2.clear();
-			
+				
 		}
-
 		else if(islower((*it)[0])){
-			auto it2 = find((*it).begin(), (*it).end(), empty);
-			auto it3 = (*it).begin();
-			auto it4 = (*it).end();
-			snum ="";
+			string current = *it;
 			alias ="";
+			sbid ="";
+			auto it2 = find(current.begin(),current.end(),' ');
 			it2++;
-			isIn = 0;
+			auto it3 = current.begin();
 			while(it3 != it2){
-				alias += (*it3);
+				alias+=*it3;
 				it3++;
 			}
-			while(it2 != it4){
-				snum += *it2;
+			while(it2 != current.end()){
+				sbid += *it2;
 				it2++;
-			}
-			num = stoi(snum);
-			participante p1;
-			p1.nombre = alias;
-			p1.bid = num;
-			if(s1.size() > 0){
-				for(auto it : s1)
-					if(alias == it.nombre)
-						isIn = 1;	
-			}
-			if(s1.size() == 0 || !(isIn)){
-				s1.insert(p1);
-			}
-			if(isIn){
-				for(auto it : s1)
-					if(alias == it.nombre){
-						it.nombre = alias;
-						it.bid = num;
+			}		
+			nbid = stoi(sbid);
+			numbers.push_back(nbid);
+			m2[alias] = nbid;
+		}
+	}
+	
+	for(auto it = m1.begin(); it != m1.end(); it++){
+		auto it2 = it;
+		auto m2 = (*it).second;
+		it2++;
+		for(;it2 != m1.end(); it2++){
+			auto m3 = (*it2).second;
+			for(auto it3 : m2){
+				for(auto it4 : m3){
+					if(it3.first == it4.first){
+						toEliminate.push_back(it3.first);
 					}
-			}
-			v2.push_back(num);
-		}
-	}
-	
-	auto it5 = map1.end();
-	it5--;	
-	/*for(auto it = map1.begin(); it != map1.end(); it++){
-		auto &s2 = (*it).second;
-		auto it2 = it;
-		if(it != it5){
-			it2++;
-			for(;it2 != map1.end(); it2++){
-				auto& s3 = (*it2).second;
-				for(auto it3 = s2.begin(); it3 != s2.end(); it3++)
-					for(auto it4 = s3.begin(); it4 != s3.end(); it4++)
-						if((*it3).nombre == (*it4).nombre)
-							s2.erase(it3);
-			}
-		}
-	}*/
-	vector<string> toEliminate;
-	for(auto it = map1.begin(); it != map1.end(); it++){
-		auto &s2 = (*it).second;
-		auto it2 = it;
-		if(it != it5){
-			it2++;
-			for(;it2 != map1.end(); it2++){
-				auto& s3 = (*it2).second;
-				for(auto it3 = s2.begin(); it3 != s2.end(); it3++)
-					for(auto it4 = s3.begin(); it4 != s3.end(); it4++)
-						if((*it3).nombre == (*it4).nombre)
-							toEliminate.push_back((*it3).nombre);
+				}
 			}
 		}
 	}
-	reverse(toEliminate.begin(),toEliminate.end());	
-	for(auto it : toEliminate){cout << it;}
-	cout << endl;
-	for(auto& it : map1){
-		auto& s2 = it.second;
-		for(auto it1 : s2){
-			for(const auto& it3 : toEliminate){
-				if(it1.nombre == it3){
-					cout << it1.nombre ;
-					s2.erase(it1);
-				} 
-			}
-		}
-	}
-	
-	ofstream file2;
-	file2.open("/home/eduardo/Desktop/Utec/Poo2/practica-calificada-3-Marcuss17/results2.txt");
-	if(!file2.is_open()){cout << "Error al abrir el archivo!";}
-	else{
-		for(auto it : map1){
-			file2 << it.first << endl;
-			auto s2 = it.second;
-			for(auto it2 : s2){
-				file2 << it2.nombre << ':' << it2.bid << endl;
-			}
-		}
-	}
-	file2.close();	
 
-	for(auto it : map1){
-		cout << it.first << endl;
-		auto s2 = it.second;
-		for(auto it2 : s2){
-			cout << it2.nombre << ':' << it2.bid << endl;}
+	for(auto& it : m1){
+		auto& m2 = it.second;
+		for(auto it2 : m2){
+			for(const auto& it3: toEliminate){
+				if(it2.first == it3){
+					m2.erase(it2.first);
+				}
+			}
+		}
 	}
+
+	ofstream file2;
+	string ruta2= "/home/eduardo/Desktop/Utec/Poo2/practica-calificada-3-Marcuss17/finalResult.txt";
+	file2.open(ruta2);
+	if(!file2.is_open()){cout << "No se pudo abrir el archivo";}
+	else{
+		for(auto it : m1){
+			file2 << it.first << endl;
+			auto m3 = it.second;
+			for(auto it2 : m3)
+				file2 << it2.first << ':' << it2.second << endl;	
+		}
+	}	
 	
-	
+	file2.close();
+
+	for(auto it : m1){
+		cout << it.first << endl;
+		auto m3 = it.second;
+		for(auto it2 : m3)
+			cout << it2.first << ':' << it2.second << endl; 
+	}	
 return 0;
 }
